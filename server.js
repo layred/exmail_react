@@ -30,6 +30,10 @@ app.use(cors(
     }
 ))
 
+app.get("/test", (req, res) => {
+    return res.json({test: "test"})
+})
+
 app.post('/sanctum/token', async (req, res) => {
     try {
         const response = await axios.post(
@@ -136,6 +140,23 @@ app.post("/shipments/:shipmentID/issued", async (req, res) => {
             }
         );
         return res.json(response.data)
+    }
+    catch (err) {
+        res.status(404)
+        return res.json({"error": err.message})
+    }
+})
+
+app.get("/shipments/:shipmentID/etic-pdf", async (req, res) => {
+    try {
+        const response = await axios.get(
+            `https://pvz.exmail24.ru/api/etic-pdf?shipment_id=${req.params.shipmentID}`,
+            {
+                headers: getHeaders(req)
+            }
+        );
+        res.set("Content-Type", "application/pdf")
+        return res.send(response.data)
     }
     catch (err) {
         res.status(404)

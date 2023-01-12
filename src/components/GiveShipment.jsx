@@ -27,10 +27,7 @@ const GiveShipment = () => {
     const [isLoading, setIsLoading] = useState(false);
     //Math.floor(Math.random() * 1000) + 1
 
-    const closeModal = () => {
-        setIsOpen(false)
-        toast.info("Вы отменили выдачу посылки.")
-    }
+    const closeModal = () => setIsOpen(false)
     const openModal = () => setIsOpen(true)
 
     const handleSubmitGive = e => {
@@ -46,25 +43,18 @@ const GiveShipment = () => {
         getShipment(shipmentid)
             .then((response) => {
                 let code = response.data.sms
-                if (code === null) {
+                if (code === null || code === "" || code === undefined) {
                     sendShipmentSMS(shipmentid)
                     getShipment(shipmentID).then((response) => {
-                        code = response.data.sms
+                        setSMSCode(response.data.sms);
+                    }).catch((err) => {
+                        if (err.response.status === 404) toast.warning("Отправление не найдено")
                     })
                 }
-                setSMSCode(code);
-                // let code = prompt(`Введите SMS: ${sms}`, "");
-                openModal();
-                // if (code == null || code === "") {
-                //     toast.info("Вы отменили выдачу посылки.")
-                // }
-                // else {
-                //     if ((code).toString() === (sms).toString()) {
-                //         issuedShipment(shipmentid, sms)
-                //         toast.success(`Отправление ${response.data.number}(${response.data.id}) успешно выдано!`)
-                //     }
-                //     else toast.error("Вы неверно ввели код подтверждения")
-                // }
+                else {
+                    setSMSCode(response.data.sms);
+                    openModal();
+                }
             })
             .catch((err) => {
                 if (err.response.status === 404) toast.warning("Отправление не найдено")

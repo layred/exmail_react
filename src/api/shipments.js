@@ -13,4 +13,12 @@ async function issuedShipment(shipmentID, sms) {
     return await client.post(`${API_URL}/shipments/${shipmentID}/issued/`, {"sms": sms})
 }
 
-export { getShipment, sendShipmentSMS, issuedShipment};
+async function getPochtaShipment(shipmentID) {
+    return await client.get(`https://sa.exmail24.ru/api/shipments/get-id/${shipmentID}`)
+}
+
+async function getSticker(shipmentID) {
+    return await client.get(`${API_URL}/shipments/${shipmentID}/etic-pdf`, {responseType: 'blob'})
+}
+
+export { getShipment, sendShipmentSMS, issuedShipment, getPochtaShipment, getSticker };
