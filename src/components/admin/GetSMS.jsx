@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { getShipment } from '../api/shipments';
+import { getShipment } from '../../api/shipments';
 import { toast } from 'react-toastify';
-import { parseCode } from '../lib/common';
+import { parseCode } from '../../lib/common';
 
 const GetSMS = () => {
     const [shipmentID, setShipmentID] = useState();
@@ -28,7 +28,7 @@ const GetSMS = () => {
     }
     return (
         <>
-            <div className='rounded-lg w-auto h-auto bg-gray-100 p-8 flex flex-col justify-center shadow-md'>
+            <div className='rounded-lg w-auto h-auto p-4 flex flex-col justify-center'>
                 <form className="w-full" onSubmit={handleSubmitSMS}>
                     {
                         isLoading ?
@@ -41,8 +41,8 @@ const GetSMS = () => {
                             </div> :
                             <>
                                 <div className="flex flex-col items-center py-2">
-                                    <input className="mb-2 appearance-none bg-gray-200 p-8 border-blue-200 w-full text-gray-700 py-3 px-3 leading-tight focus:outline-none" type="number" placeholder="Номер отправления" required aria-label="Номер отправления" onChange={(e) => setShipmentID(e.target.value)} />
-                                    <button type="submit" className="w-full flex-shrink-0 bg-blue-500 hover:bg-blue-700 border-blue-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded">
+                                    <input className="mb-2 appearance-none bg-gray-200 p-8 border-blue-200 w-full text-gray-900 py-3 px-3 leading-tight focus:outline-none rounded-md" type="number" placeholder="Номер отправления" required aria-label="Номер отправления" onChange={(e) => setShipmentID(e.target.value)} />
+                                    <button type="submit" className="w-full flex-shrink-0 bg-violet-600 hover:bg-violet-400 border-violet-600 hover:border-violet-400 text-sm border-4 text-white py-1 px-2 rounded transition-colors">
                                         Получить SMS
                                     </button>
                                 </div>

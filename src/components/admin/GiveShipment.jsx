@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { getShipment, sendShipmentSMS, issuedShipment } from '../api/shipments';
+import { getShipment, sendShipmentSMS, issuedShipment } from '../../api/shipments';
 import { toast } from 'react-toastify';
-import { parseCode } from '../lib/common';
+import { parseCode } from '../../lib/common';
 import Modal from 'react-modal';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 
@@ -32,21 +32,24 @@ const GiveShipment = () => {
 
     const handleSubmitGive = e => {
         e.preventDefault();
-        console.log(shipmentID)
         setIsLoading(true);
         var shipmentid = shipmentID;
         if ((shipmentID).toString().length === 13) {
             let code = parseCode((shipmentID).toString());
             shipmentid = code.id;
         }
-        setShipmentID(shipmentid);
         getShipment(shipmentid)
             .then((response) => {
                 let code = response.data.sms
                 if (code === null || code === "" || code === undefined) {
-                    sendShipmentSMS(shipmentid)
-                    getShipment(shipmentID).then((response) => {
-                        setSMSCode(response.data.sms);
+                    console.log('no-code, send code to user')
+                    sendShipmentSMS(shipmentid).then((response) => {
+                        getShipment(shipmentid).then((response) => {
+                            setSMSCode(response.data.sms);
+                            openModal();
+                        }).catch((err) => {
+                            if (err.response.status === 404) toast.warning("Отправление не найдено")
+                        })
                     }).catch((err) => {
                         if (err.response.status === 404) toast.warning("Отправление не найдено")
                     })
@@ -74,7 +77,7 @@ const GiveShipment = () => {
 
     return (
         <>
-            <div className='rounded-lg w-auto h-auto bg-gray-100 p-8 flex flex-col justify-center shadow-md'>
+            <div className='rounded-lg w-auto h-auto p-4 flex flex-col justify-center'>
                 <form className="w-full" onSubmit={handleSubmitGive}>
                     {
                         isLoading ?
@@ -87,8 +90,8 @@ const GiveShipment = () => {
                             </div> :
                             <>
                                 <div className="flex flex-col items-center py-2">
-                                    <input className="mb-2 appearance-none bg-gray-200 p-8 border-blue-200 w-full text-gray-700 py-3 px-3 leading-tight focus:outline-none" type="number" placeholder="Номер отправления" required aria-label="Номер отправления" onChange={(e) => setShipmentID(e.target.value)} />
-                                    <button type="submit" className="w-full flex-shrink-0 bg-blue-500 hover:bg-blue-700 border-blue-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded">
+                                    <input className="mb-2 appearance-none bg-gray-200 p-8 border-blue-200 w-full text-gray-700 py-3 px-3 leading-tight focus:outline-none rounded-md" type="number" placeholder="Номер отправления" required aria-label="Номер отправления" onChange={(e) => setShipmentID(e.target.value)} />
+                                    <button type="submit" className="w-full flex-shrink-0 bg-violet-600 hover:bg-violet-400 border-violet-600 hover:border-violet-400 text-sm border-4 text-white py-1 px-2 rounded transition-colors">
                                         Выдать посылку
                                     </button>
                                 </div>
@@ -101,7 +104,7 @@ const GiveShipment = () => {
                 <h2>Для подтверждения выдачи напишите код {SMSCode}</h2>
                 <form onSubmit={confirmGiveShipment}>
                     <input className="mb-2 appearance-none bg-gray-200 p-4 border-blue-200 w-full text-gray-700 py-3 px-3 leading-tight focus:outline-none" type="number" placeholder="Код подтверждения" max-length="4" required aria-label="Код подтверждения" onChange={(e) => setConfirmGiveCode(e.target.value)} />
-                    <button type="submit" className="w-full flex-shrink-0 bg-blue-500 hover:bg-blue-700 border-blue-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded">
+                    <button type="submit" className="w-full flex-shrink-0 bg-violet-600 hover:bg-violet-400 border-violet-600 hover:border-violet-400 text-sm border-4 text-white py-1 px-2 rounded transition-colors">
                         Подтвердить выдачу
                     </button>
                 </form>

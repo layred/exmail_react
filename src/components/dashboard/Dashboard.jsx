@@ -1,17 +1,15 @@
-import React from 'react';
-import { useUser } from '../lib/customHooks';
+import { useEffect } from 'react';
+import { useUser } from '../../lib/customHooks';
 
 const Dashboard = () => {
-    const { user, authenticated } = useUser();
-    if (!user || !authenticated) {
-        return <div className="w-full h-screen flex justify-center items-center">
-            <div className="ml-2 w-8 h-8 border-l-2 rounded-full animate-spin border-black" />
-        </div>;
-    }
+    const { user } = useUser();
+
+    useEffect(() => {
+        document.title = "Главная";
+    });
 
     return (
-        <div className="p-8 bg-grey-100 h-screen w-screen">
-            <div className="text-2xl mb-4 font-bold text-black">Главная</div>
+        <div className="p-8 bg-grey-100">
             {
                 user &&
                 <div className='text-black'>

@@ -1,22 +1,26 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useState } from 'react';
-import { APP_ROUTES } from '../utils/constants';
 import { useNavigate } from 'react-router-dom';
-import { useUser } from '../lib/customHooks';
-import { storeTokenInLocalStorage } from '../lib/common';
+import { useUser } from '../../lib/customHooks';
+import { storeTokenInLocalStorage } from '../../lib/common';
 import { toast } from 'react-toastify';
-import { authentication, getAuthUser } from '../api/client'
+import { authentication, getAuthUser } from '../../api/client'
 
 const SignIn = () => {
+
     const navigate = useNavigate();
     const { user, authenticated } = useUser();
     if (user || authenticated) {
-        navigate(APP_ROUTES.DASHBOARD)
+        navigate('/dashboard')
     }
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+
+    useEffect(() => {
+        document.title = "Вход"
+    })
 
     const signIn = async () => {
         try {
@@ -28,9 +32,9 @@ const SignIn = () => {
             }).then(function (response) {
                 storeTokenInLocalStorage(response.data.token)
                 getAuthUser().catch((error) => toast.error("Неверные логин или пароль"))
-                navigate(APP_ROUTES.DASHBOARD)
+                navigate('/dashboard')
             })
-            .catch((error) => toast.error("Неверные логин или пароль"))
+                .catch((error) => toast.error("Неверные логин или пароль"))
             storeTokenInLocalStorage(response.data.token);
         }
         catch (err) {
